@@ -1,0 +1,49 @@
+import type { PromodElementType } from 'promod/built/interface';
+import { waitForCondition } from 'sat-utils';
+import { $$ } from '../../lauch/engine';
+
+class MachineListRowFragment {
+  root: PromodElementType;
+  manufacturer: PromodElementType;
+  workVolume: PromodElementType;
+  length: PromodElementType;
+  width: PromodElementType;
+  mass: PromodElementType;
+  tracktorPower: PromodElementType;
+  price: PromodElementType;
+
+  constructor(index: number) {
+    this.root = $$('#table_page > div.machies_list_section > table > tbody > tr').get(index);
+
+    this.manufacturer = this.root.$('td:nth-child(1) span');
+    this.workVolume = this.root.$('td:nth-child(2)');
+    this.length = this.root.$('td:nth-child(3)');
+    this.width = this.root.$('td:nth-child(4)');
+    this.mass = this.root.$('td:nth-child(5)');
+    this.tracktorPower = this.root.$('td:nth-child(6)');
+    this.price = this.root.$('td:nth-child(7)');
+  }
+
+  async waitMachineRow() {
+    await waitForCondition(async () => await this.root.isDisplayed(), {
+      timeout: 5000,
+      message: 'Machine row is not visible',
+    });
+  }
+
+  async getMachineData() {
+    await this.waitMachineRow();
+
+    return {
+      manufacturer: await this.manufacturer.getText(),
+      workVolume: await this.workVolume.getText(),
+      length: await this.length.getText(),
+      width: await this.width.getText(),
+      mass: await this.mass.getText(),
+      tracktorPower: await this.tracktorPower.getText(),
+      price: await this.price.getText(),
+    };
+  }
+}
+
+export { MachineListRowFragment };
